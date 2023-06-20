@@ -1,0 +1,24 @@
+## From https://jasonstitt.com/gitignore-whitelisting-patterns
+
+# 1. Ignore everything
+*
+
+# 2. But descend into directories
+!*/
+
+# 3. Allow specific files and file extensions
+!.gitignore
+!.gitattributes
+!.vscode/settings.json
+!requirements.txt
+!*.py
+!*.ipynb
+!*.md
+!*.env_template
+
+# 4. Block some directories and files
+*.git
+**/.terraform*
+**/*env
+**/.venv
+**/TMP
