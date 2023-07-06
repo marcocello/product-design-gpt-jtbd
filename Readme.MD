@@ -2,11 +2,9 @@
 
 The Jobs-To-Be-Done (JTBD) framework is a methodology centered around the concept that customers "hire" products or services to get specific jobs done. With this project, we leverage the power of OpenAI's GPT-3.5 model to automate user interviews, generate JBTD jobs, outcomes, and job stories, thus driving your product roadmap more efficiently.
 
-## What is this project about?
-
 This project aims to expedite and streamline the process of understanding customer needs and experiences using OpenAI's GPT-3.5 language model. By automating user interviews and generating job stories, we reduce the time and resources spent on extensive manual interactions, thereby optimizing data collection and product roadmap creation.
 
-## How does it work?
+### How does it work?
 
 1. **Synthesis of personas**: The system creates dynamic representations of user archetypes, complete with an understanding of their needs, goals, and pain points.
    
@@ -16,7 +14,69 @@ This project aims to expedite and streamline the process of understanding custom
 
 ## Getting Started
 
-To start using the system, clone the repository from the provided link: [marcocello/product-design-gpt-jtbd](https://github.com/marcocello/product-design-gpt-jtbd)
+This guide will walk you through the steps to set up and run the project using a Python virtual environment.
+
+### Prerequisites
+
+- Python 3.6 or higher
+- `pip` package manager
+- Git
+
+
+### Clone the Project Repository
+
+   ```bash
+   git clone https://github.com/marcocello/product-design-gpt-jtbd.git
+   ```
+
+### Create Python Virtual Environment
+
+Navigate to the project directory:
+
+```bash
+cd product-design-gpt-jtbd
+
+python3 -m venv .virtualenv
+
+#Activate the virtual environment for Windows
+.virtualenv\Scripts\activate
+
+#Activate the virtual environment for macOS/Linux
+source .virtualenv/bin/activate
+   ```
+
+With the virtual environment activated, use `pip` to install the project dependencies from the `requirements.txt` file. Run the following command:
+
+```bash
+pip install -r requirements.txt
+```
+
+This will install all the required packages and their dependencies into the virtual environment.
+
+### Configure the Environment Variables
+
+```bash
+cp .env_template .env
+```
+Open the `.env` file and find the variable `OPENAI_API_KEY`. Replace the placeholder value with your proper OpenAI API key and save the file.
+
+   ```
+   OPENAI_API_KEY=<your openai key>
+   ```
+
+Note: Make sure not to share your API key publicly or commit it to version control systems.
+
+### Run the `main.ipynb` file
+
+Activate the virtual environment by following the activation steps mentioned before if you haven't already.
+
+Open Visual Studio Code (VSCode) or any other code editor of your choice.
+
+Locate the `main.ipynb` file and open it. Within the `main.ipynb` file, look for the "Run" button or click on the "Run Cell" option next to each code cell to execute the code.
+
+Follow the instructions provided in the `main.ipynb` file to interact with the project.
+
+That's it! 
 
 ## Current Limitations
 
