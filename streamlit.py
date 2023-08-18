@@ -9,7 +9,7 @@ import lib.jtbd
 
 load_dotenv()
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+# OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 
 
@@ -49,7 +49,7 @@ def main():
         if profession:
             if openai_api_key:
                 with st.spinner(text="Creating users..."):
-                    users = lib.persona_prompt_generator.get(number=number, profession=profession, openai_api_key=OPENAI_API_KEY)
+                    users = lib.persona_prompt_generator.get(number=number, profession=profession, openai_api_key=openai_api_key)
                 st.session_state['Users'] = users
             else:
                 st.warning('Insert your OpenAI API Key')
@@ -71,11 +71,11 @@ def main():
         if st.session_state.get('Users'):
             if openai_api_key:
                 with st.spinner(text="Interviewing users..."):
-                    answers = lib.jtbd.get_interviews(personas=st.session_state['Users'], openai_api_key=OPENAI_API_KEY)
+                    answers = lib.jtbd.get_interviews(personas=st.session_state['Users'], openai_api_key=openai_api_key)
                 st.session_state['Answers'] = answers
                 st.success('Users interviewed!')
                 with st.spinner(text="Creating Jobs Map..."):
-                    jobs_map = lib.jtbd.get_jobsmap(answers=answers, openai_api_key=OPENAI_API_KEY)
+                    jobs_map = lib.jtbd.get_jobsmap(answers=answers, openai_api_key=openai_api_key)
                 st.session_state['JobsMap'] = jobs_map
                 st.success('Jobs Map Created')
             else:
