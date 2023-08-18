@@ -61,7 +61,7 @@ def main():
         users = st.session_state.get('Users')
         data = json.loads(users)
         df = pd.DataFrame(data['personas'])
-        st.success('Users generated!')
+        st.success('Users generated')
         edited_df = st.data_editor(df)
 
     st.markdown('')    
@@ -73,7 +73,7 @@ def main():
                 with st.spinner(text="Interviewing users..."):
                     answers = lib.jtbd.get_interviews(personas=st.session_state['Users'], openai_api_key=openai_api_key)
                 st.session_state['Answers'] = answers
-                st.success('Users interviewed!')
+                st.success('Users interviewed')
                 with st.spinner(text="Creating Jobs Map..."):
                     jobs_map = lib.jtbd.get_jobsmap(answers=answers, openai_api_key=openai_api_key)
                 st.session_state['JobsMap'] = jobs_map
@@ -84,9 +84,21 @@ def main():
             st.warning("Users not generated")
 
     if st.session_state.get('JobsMap'):
-        jobs_map = st.session_state.get('JobsMap')
+        col1, col2 = st.columns([3,1])
+        with col1:
+            jobs_map = st.session_state.get('JobsMap')
+            data = json.loads(jobs_map)
+            st.json(data)
+            # for item in data:
+            #     st.markdown(f"**{item}**")
+            #     if isinstance(data[item], str):
+            #         st.markdown(data[item])
+            #     else:
+            #         for item2 in data[item]:
+            #             st.markdown(f"* {item2['jobs']}")
 
-        st.text(jobs_map)
+        with col2:
+            st.download_button('Download', jobs_map, file_name=f'JobsMap-{data["Main Job"].replace(" ", "")}.txt',)
 
 if __name__ == "__main__":
     main()
