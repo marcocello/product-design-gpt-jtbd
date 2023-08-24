@@ -5,64 +5,147 @@ from langchain.memory import ChatMessageHistory
 from langchain.chat_models import ChatOpenAI
 from langchain.schema import SystemMessage, HumanMessage
 import json
+import uuid
+
+def get_single_interview(persona, openai_api_key):
+
+  questions = """
+Tell me a little about yourself and what you do.
+When was the last time you did the main job?
+How did you feel overall while getting that job done?
+
+What are you trying to accomplish? What tasks are involved?
+What problems are you trying to prevent or resolve?
+What helps you achieve your goals?
+What would the ideal service be to do the job for you?”
+What else are you trying to get done?”
+
+How do you get started?
+What is the previous step? What's the next step?
+How do you continue after that?
+How do you make decisions along the way?
+How do you feel at each stage in the process?
+How do you know you are doing the job right?
+How do you wrap things up?
+
+What workarounds exist in your process?
+What do you dread doing? What do you avoid? Why?
+What could be easier? Why?
+Why do you avoid doing certain parts of the job?
+What's the most annoying part? Why is that frustrating?
+How do you feel when the job is completed?
+
+In which situations do you act differently?
+What conditions influence your decisions?
+How do the environment and setting affect your attitude and feelings while getting the job done?
+""" 
+  uuid_number = str(uuid.uuid4()) 
+  prompt = f"""
+  For this persona
+  {json.dumps(persona)}
+
+  Answer the following questions:
+  {questions}
+
+  The output expect is a json file with the following example:
+        {{
+            "answers": {{
+              "name": "{persona['name']}",
+              "answers": [
+                {{
+                  "question": "",
+                  "answer": ""
+                }}
+              ]
+            }}
+            "control": {uuid_number}
+        }}    
+  """
+
+  chat = ChatOpenAI(openai_api_key=openai_api_key)
+
+  history = ChatMessageHistory()
+  history.add_user_message(prompt)
+  ai_response = chat(history.messages)
+  output = ai_response.content
+
+  while uuid_number not in ai_response.content:
+      history.add_ai_message(ai_response.content)
+      ai_response = chat(history.messages)
+      output += ai_response.content
+
+  return json.loads(output)
+
+
+  # history = ChatMessageHistory()
+  # history.add_user_message(prompt)
+  # import time
+  # start_time = time.time()
+  # ai_response = chat(history.messages)
+  # print("--- %s seconds ---" % (time.time() - start_time))
+  # print(ai_response.content)
+  # return json.loads(ai_response.content)
+
+
+
+def summarize_answers(question, answers, openai_api_key):
+
+  uuid_number = str(uuid.uuid4()) 
+  prompt = f"""
+  This is the question
+  {json.dumps(question)}
+
+  And those are the answers from the personas generated
+  {json.dumps(answers)}
+
+  Please summarize the answers and create a summarized_answer.
+
+  The output expect is a json file with the following example:
+        {{
+            "summarized_answer": {{
+              "question": "",
+              "summarized_answer": ""
+            }}
+            "control": {uuid_number}
+        }}    
+  """
+
+  chat = ChatOpenAI(openai_api_key=openai_api_key)
+
+  history = ChatMessageHistory()
+  history.add_user_message(prompt)
+  ai_response = chat(history.messages)
+  output = ai_response.content
+
+  while uuid_number not in ai_response.content:
+      history.add_ai_message(ai_response.content)
+      ai_response = chat(history.messages)
+      output += ai_response.content
+
+  return json.loads(output)
+
+
+  # history = ChatMessageHistory()
+  # history.add_user_message(prompt)
+  # import time
+  # start_time = time.time()
+  # ai_response = chat(history.messages)
+  # print("--- %s seconds ---" % (time.time() - start_time))
+  # print(ai_response.content)
+  # return json.loads(ai_response.content)
+
+
 
 def get_interviews(personas, openai_api_key):
+  answers = dict()
 
-    questions = """
-    Tell me a little about yourself and what you do.
-    When was the last time you did the main job?
-    How did you feel overall while getting that job done?
+  for persona in personas['personas']:
+    interview = get_single_interview(persona, openai_api_key)
+    answers[persona['name']] = json.loads(interview)
 
-    What are you trying to accomplish? What tasks are involved?
-    What problems are you trying to prevent or resolve?
-    What helps you achieve your goals?
-    What would the ideal service be to do the job for you?”
-    What else are you trying to get done?”
+  return answers
 
-    How do you get started?
-    What is the previous step? What's the next step?
-    How do you continue after that?
-    How do you make decisions along the way?
-    How do you feel at each stage in the process?
-    How do you know you are doing the job right?
-    How do you wrap things up?
-
-    What workarounds exist in your process?
-    What do you dread doing? What do you avoid? Why?
-    What could be easier? Why?
-    Why do you avoid doing certain parts of the job?
-    What's the most annoying part? Why is that frustrating?
-    How do you feel when the job is completed?
-
-    In which situations do you act differently?
-    What conditions influence your decisions?
-    How do the environment and setting affect your attitude and feelings while getting the job done?
-    """
-
-    chat = ChatOpenAI(openai_api_key=openai_api_key)
-
-    prompt = f"""
-    Those are the personas
-    {personas}
-
-    For each of them, answer the following questions:
-    {questions}
-
-    The output expect is a json file with the following example:
-        [
-            {{"question": "TBC",
-                "answers": [{{
-                    "persona": "TBC",
-                    "answer": "TBC"
-                    }}
-                ]
-        ]
-        }}
-    """
-
-    return chat([HumanMessage(content=prompt)]).content
-
-def get_jobsmap(answers, openai_api_key):
+def get_jobsmap(personas, answers, openai_api_key):
 
     chat = ChatOpenAI(openai_api_key=openai_api_key, temperature=0)
 
@@ -115,12 +198,10 @@ def get_jobsmap(answers, openai_api_key):
                     }]  
             }
             """),
-            HumanMessage(content=answers),
+            HumanMessage(content=f"""Those are the personas {json.dumps(personas)} and those are the questions and answers from those personas {json.dumps(answers)}"""),
         ]
     )
-
-
-    return jobs_map.content
+    return json.loads(jobs_map.content)
 
 def get_outcomes(answers, jobs_map, openai_api_key):
 
@@ -255,3 +336,29 @@ def get_outcomes(answers, jobs_map, openai_api_key):
 
 
     return outcomes.content
+
+
+def main():
+  import persona_prompt_generator
+  import os
+  from dotenv import load_dotenv
+
+  load_dotenv()
+
+  OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+  personas = persona_prompt_generator.get(number=2, profession="UX Designer", openai_api_key=OPENAI_API_KEY)
+
+  answers = dict()
+  for persona in personas['personas']:
+    print(persona['name'])
+    answers[persona['name']] = get_single_interview(persona=persona, openai_api_key=OPENAI_API_KEY)
+          
+  
+  jobs_map = get_jobsmap(answers,openai_api_key=OPENAI_API_KEY)
+ 
+  with open("answers.json", 'w') as file:
+    json.dump(answers, file)
+
+
+if __name__ == "__main__":
+  main()

@@ -6,6 +6,7 @@ import streamlit as st
 import json
 import lib.persona_prompt_generator
 import lib.jtbd
+import math
 
 load_dotenv()
 
@@ -25,7 +26,7 @@ def main():
 
     openai_api_key = st.text_input(label='Insert your OpenAI API Key')
     
-    st.markdown('##### Synthetic Users')
+    st.markdown('##### Users')
     col1, col2 = st.columns(2)
     with col1:
         profession = st.text_input('Profession of users')
@@ -48,7 +49,9 @@ def main():
     if generate_users:
         if profession:
             if openai_api_key:
-                with st.spinner(text="Creating users..."):
+
+                total_time = 0.5752688172043015*number+15.15591397849463
+                with st.spinner(text=f"Creating users, it should take less than {math.ceil(total_time / 5) * 5} seconds ..."):
                     users = lib.persona_prompt_generator.get(number=number, profession=profession, openai_api_key=openai_api_key)
                 st.session_state['Users'] = users
             else:
@@ -59,8 +62,7 @@ def main():
 
     if st.session_state.get('Users'):
         users = st.session_state.get('Users')
-        data = json.loads(users)
-        df = pd.DataFrame(data['personas'])
+        df = pd.DataFrame(users['personas'])
         st.success('Users generated')
         edited_df = st.data_editor(df)
 
@@ -70,12 +72,38 @@ def main():
     if st.button('Create Jobs Map'):
         if st.session_state.get('Users'):
             if openai_api_key:
-                with st.spinner(text="Interviewing users..."):
-                    answers = lib.jtbd.get_interviews(personas=st.session_state['Users'], openai_api_key=openai_api_key)
+                answers = dict()
+                users = st.session_state.get('Users')
+                for persona in users['personas']:
+
+                    with st.spinner(text=f"""
+                                    Interviewing users, it should take less than 90 seconds each.\n
+                                    Now interviewing user \"{persona['name']}\" ..."""):
+                        answers[persona['name']] = lib.jtbd.get_single_interview(persona=persona, openai_api_key=openai_api_key)
                 st.session_state['Answers'] = answers
                 st.success('Users interviewed')
-                with st.spinner(text="Creating Jobs Map..."):
-                    jobs_map = lib.jtbd.get_jobsmap(answers=answers, openai_api_key=openai_api_key)
+
+                answers = st.session_state['Answers']
+                new_answers = {}
+
+                for user, qa_list in answers.items():
+                    for qa in qa_list['answers']['answers']:
+                        question = qa["question"]
+                        
+                        if question not in new_answers:
+                            new_answers[question] = []
+
+                        new_answers[question].append({"user": user, "answer": qa["answer"]})
+
+                with st.spinner(text="Summarizing interviews, it should take less than 200 seconds ..."):
+                    summarized_answers = dict()
+                    for question in new_answers:
+                        res = lib.jtbd.summarize_answers(question=question,answers=new_answers[question],openai_api_key=openai_api_key)
+                        summarized_answers[question] = res["summarized_answer"]
+                st.success('Interviews summarized')
+
+                with st.spinner(text="Creating Jobs Map, it should take less than 20 seconds ..."):
+                    jobs_map = lib.jtbd.get_jobsmap(personas=users['personas'], answers=summarized_answers, openai_api_key=openai_api_key)
                 st.session_state['JobsMap'] = jobs_map
                 st.success('Jobs Map Created')
             else:
@@ -84,21 +112,12 @@ def main():
             st.warning("Users not generated")
 
     if st.session_state.get('JobsMap'):
+        jobs_map = st.session_state.get('JobsMap')
         col1, col2 = st.columns([3,1])
         with col1:
-            jobs_map = st.session_state.get('JobsMap')
-            data = json.loads(jobs_map)
-            st.json(data)
-            # for item in data:
-            #     st.markdown(f"**{item}**")
-            #     if isinstance(data[item], str):
-            #         st.markdown(data[item])
-            #     else:
-            #         for item2 in data[item]:
-            #             st.markdown(f"* {item2['jobs']}")
-
+            st.json(json.dumps(jobs_map))
         with col2:
-            st.download_button('Download', jobs_map, file_name=f'JobsMap-{data["Main Job"].replace(" ", "")}.txt',)
+            st.download_button('Download', json.dumps(jobs_map), file_name=f'JobsMap-{jobs_map["Main Job"].replace(" ", "")}.txt',)
 
 if __name__ == "__main__":
     main()
