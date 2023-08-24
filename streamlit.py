@@ -12,18 +12,26 @@ load_dotenv()
 
 # OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
+import subprocess
 
+def get_git_tag():
+    try:
+        tag = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"]).strip().decode('utf-8')
+    except:
+        tag = "Unknown"
+    return tag
 
 def main():
 
-    st.set_page_config(page_title=None, page_icon=None, layout="centered", initial_sidebar_state="collapsed", menu_items=None)
+    st.set_page_config(page_title="🚀 Gideon - Supercharging Product Design", page_icon=None, layout="centered", initial_sidebar_state="collapsed", menu_items=None)
 
     st.session_state['step'] = None
 
 
-    st.subheader('🚀 Gideon: supercharging product design')
+    st.subheader('🚀 Gideon - Supercharging Product Design')
     st.markdown("Our platform, Gideon, crafts detailed synthetic Users, conducts insightful job-based interviews, and maps out innovation avenues, all autonomously. Full article [here](https://bootcamp.uxdesign.cc/supercharging-product-design-unleashing-gpt-and-jobs-to-be-done-for-limitless-innovation-ff32fcb2c5a4).")
 
+    st.markdown(f"Version: {get_git_tag()}")
     openai_api_key = st.text_input(label='Insert your OpenAI API Key')
     
     st.markdown('##### Users')
