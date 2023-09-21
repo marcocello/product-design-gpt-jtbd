@@ -102,6 +102,8 @@ def main():
 
                         new_answers[question].append({"user": user, "answer": qa["answer"]})
 
+                st.session_state['Interviews'] = new_answers
+
                 with st.spinner(text="Summarizing interviews, it should take less than 200 seconds ..."):
                     summarized_answers = dict()
                     for question in new_answers:
@@ -120,11 +122,14 @@ def main():
 
     if st.session_state.get('JobsMap'):
         jobs_map = st.session_state.get('JobsMap')
+        interviews = st.session_state.get('Interviews')
         col1, col2 = st.columns([3,1])
         with col1:
             st.json(json.dumps(jobs_map))
         with col2:
-            st.download_button('Download', json.dumps(jobs_map), file_name=f'JobsMap-{jobs_map["Main Job"].replace(" ", "")}.txt',)
+            st.download_button('Download JobsMap', json.dumps(jobs_map), file_name=f'JobsMap-{jobs_map["Main Job"].replace(" ", "")}.txt',)
+            st.download_button('Download Interviews', json.dumps(interviews), file_name=f'Interviews.txt',)
+            
 
 if __name__ == "__main__":
     main()
