@@ -3,6 +3,24 @@ from langchain.schema import HumanMessage
 from langchain.memory import ChatMessageHistory
 import uuid
 import json
+from langchain.chat_models import ChatOpenAI
+from langchain.schema import HumanMessage
+from langchain.memory import ChatMessageHistory
+from langchain.schema import SystemMessage, HumanMessage
+import uuid
+import json
+import time
+import os
+import pandas as pd
+from langchain.vectorstores import Pinecone
+from langchain.embeddings import OpenAIEmbeddings
+import pinecone
+from langchain.schema.runnable import RunnablePassthrough, RunnableLambda
+from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain.schema import StrOutputParser
+
+from langchain.chat_models import ChatOpenAI
+
 
 def get(number, profession, openai_api_key):
     
@@ -50,3 +68,74 @@ def get(number, profession, openai_api_key):
         output += ai_response.content
 
     return json.loads(output)
+
+
+def getV2(number, profession):
+
+    llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)
+
+    prompt = ChatPromptTemplate.from_messages([
+        ("system", 
+        """
+        You are an advacend AI able to syntetic generate personas very detailed, precised and realistic.
+        """),
+        ("human", """
+        
+        Create only a specific {number} persona(s).
+        Do not generate more than {number} personas
+        - each of them that is a {profession} in a different industry
+        - has a different experience level
+        - put a description about each of them
+        - output as json format with the following fields:
+            - name
+            - profession
+            - industry
+            - experience_level
+            - description
+            """)
+    ])
+
+    functions = [
+        {
+        "name": "json",
+        "description": "create the json",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "aaa": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "item": {
+                            "name": {"type": "string"},
+                                "profession": {"type": "string"},
+                                "industry": {"type": "string"},
+                                "experience_level": {"type": "string"},
+                                "description": {"type": "string"},
+                                }
+                            }
+                        },
+                },
+                "required": ["aaa"]
+            },
+        },
+    ]
+
+    rag_chain = (
+        prompt 
+        | llm.bind(function_call={"name": "json"}, functions = functions)
+    )
+
+    res = rag_chain.invoke({"number": number, "profession": profession})
+
+    input_string = res.additional_kwargs['function_call']['arguments']
+
+    import json 
+
+    
+    cleaned_string = input_string.replace('\n', '')
+
+    parsed_json = json.loads(cleaned_string)
+
+    return pd.DataFrame(parsed_json["personas"])
+

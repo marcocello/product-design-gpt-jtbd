@@ -1,135 +1,199 @@
-import os
-import importlib
 from dotenv import load_dotenv
-import pandas as pd
 import streamlit as st  
-import json
+import lib.jobs
+import os
+import yaml
+import subprocess
+import pandas as pd
+import math
 import lib.persona_prompt_generator
 import lib.jtbd
-import math
+
 
 load_dotenv()
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-# OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-
-import subprocess
+def set_page(name):
+    st.set_page_config(page_title=name, page_icon=None, initial_sidebar_state="collapsed")
+    st.subheader(name)
+    st.markdown("Discover user desires, shape product solutions, and drive innovation with our AI-powered tool that leverages the Jobs-to-be-Done framework and Copilot guidance. \
+                Full article [here](https://bootcamp.uxdesign.cc/supercharging-product-design-unleashing-gpt-and-jobs-to-be-done-for-limitless-innovation-ff32fcb2c5a4)")
+    st.markdown(f'''Version: {get_git_tag()}''')
 
 def get_git_tag():
     try:
         tag = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"]).strip().decode('utf-8')
     except:
-        tag = "Unknown"
+        tag = "0.0.0"
     return tag
+
 
 def main():
 
-    st.set_page_config(page_title="🚀 Gideon - Supercharging Product Design", page_icon=None, layout="centered", initial_sidebar_state="collapsed", menu_items=None)
+    set_page(name="🚀 Gideon: User-Centric Products with AI Copilot")
 
-    st.session_state['step'] = None
+    default_state = {
+        "_openai_api_key":               "",
+        "main_jobs_additional_prompt":   "",
+        "job_performers_system_prompt": "kdkdkfkmfk",
+        "_topic":                       "",
+        "_skillset":                    "",
+        "_jobs":                        pd.DataFrame(data=None, columns=["Job Performers","Aspiration Job","Big Job","Little Job"]),
+        "selected_job_performers":      "",
+        "selected_main_job":            "",
+        "generated_job_performers":     pd.DataFrame(data=None, columns=["name", "profession", "industry", "experience_level"]),
+    }
+
+    state = st.session_state
+    for item in default_state:
+        if item not in state:
+            state[item] = default_state[item]
 
 
-    st.subheader('🚀 Gideon - Supercharging Product Design')
-    st.markdown("Our platform, Gideon, crafts detailed synthetic Users, conducts insightful job-based interviews, and maps out innovation avenues, all autonomously. Full article [here](https://bootcamp.uxdesign.cc/supercharging-product-design-unleashing-gpt-and-jobs-to-be-done-for-limitless-innovation-ff32fcb2c5a4).")
+    tab1, tab2, tab3= st.tabs([
+        "Step 1. Discover Job Performers and Main Jobs", 
+        "Step 2. Generate Job Performers", 
+        "Step 3. Interview Job Performers", 
+        # "Step 4. Discover Jobs Map", 
+        # "Step 5. Discover Outcomes"
+        ])
 
-    st.markdown(f"Version: {get_git_tag()}")
-    openai_api_key = st.text_input(label='Insert your OpenAI API Key')
     
-    st.markdown('##### Users')
-    col1, col2 = st.columns(2)
-    with col1:
-        profession = st.text_input('Profession of users')
-    with col2:
-        number = st.number_input('Number of users', min_value=1, max_value=10)
+    with st.sidebar:
+        settings = dict()
+        openai_api_key = st.text_input(label='OpenAI API Key', value=state._openai_api_key, placeholder="sk-XXX")
+        settings["openai_api_key"] = openai_api_key
 
+    with tab1:
 
-    col1, col2, col3 = st.columns([1,1,3])
-    with col1:
-        generate_users = st.button('Generate Users')
-    with col2:
-        delete_users = st.button('Delete Users')
+        col1, col2 = st.columns(2)
 
-    if delete_users:
-        if st.session_state.get('Users'):
-            st.session_state['Users'] = None
-            st.success('Users deleted!')
-        else:
-            st.warning('No users to delete')
-    if generate_users:
-        if profession:
-            if openai_api_key:
+        with col1:
+            topic = st.text_area("Topics you are interested and you seek to innovate")
+        with col2:    
+            skillset = st.text_area("Your skillset")
+
+        with st.expander("Additional prompt", expanded=False):
+            state.main_jobs_additional_prompt = st.text_area("Additional prompt", value=state.main_jobs_additional_prompt, label_visibility="collapsed", placeholder="focus on a specific job performers; focus on a specific market, ...")
+
+        
+        generate_main_jobs = st.button("Generate", type="primary")
+        if generate_main_jobs:
+            if topic:
+                with st.spinner(text=f"Generating Main Jobs and Job Performers..."):
+                    jobs = lib.jobs.get(
+                        topic=topic,
+                        skillset=skillset,
+                        jobs=state._jobs,
+                        additional_prompt=state.main_jobs_additional_prompt,
+                        openai_api_key=openai_api_key)
+                    state._jobs = jobs
+                    st.rerun()
+            else:
+                st.warning('Insert the topic')
+
+        
+        jobs = st.dataframe(state._jobs, 
+                              use_container_width=True, 
+                              hide_index=True,
+                              )        
+            
+        col5, col6 = st.columns(2)
+        with col5:
+            selected_job_performers = st.text_input("Selected Job Performers")
+        with col6:
+            selected_main_job = st.text_input("Selected Main Job")
+        
+        selected = st.button("Apply and move to the next section", type="primary")
+
+        if selected:
+            state["selected_job_performers"] = selected_job_performers
+            state["selected_main_job"] = selected_main_job
+            st.rerun()        
+
+    with tab2:
+
+        col1, col2 = st.columns(2)
+        with col1:
+            profession = st.text_input('Job Performers', value=state["selected_job_performers"])
+        with col2:
+            number = st.number_input('Number', min_value=1, max_value=10)
+
+        generate_job_performers = st.button('Generate', type="primary", key="generate_job_performers")
+
+        if generate_job_performers:
+            if profession:
                 total_time = 0.5752688172043015*number+15.15591397849463
                 with st.spinner(text=f"Creating users, it should take less than {math.ceil(total_time / 5) * 5} seconds ..."):
-                    users = lib.persona_prompt_generator.get(number=number, profession=profession, openai_api_key=openai_api_key)
-                st.session_state['Users'] = users
+                    generated_job_performers = lib.persona_prompt_generator.getV2(number=number, profession=profession)
+                st.session_state['generated_job_performers'] = generated_job_performers
+                st.rerun()
             else:
-                st.warning('Insert your OpenAI API Key')
-        else:
-            st.warning('Input the profession')
+                st.warning('Input the Job Performers')
 
 
-    if st.session_state.get('Users'):
-        users = st.session_state.get('Users')
-        df = pd.DataFrame(users['personas'])
-        st.success('Users generated')
-        edited_df = st.data_editor(df)
 
-    st.markdown('')    
-    st.markdown('##### Jobs Map')
+        generated_job_performers = st.data_editor(state.generated_job_performers, 
+                        use_container_width=True, 
+                        num_rows= "dynamic", 
+                        hide_index=True,
+                        )
 
-    if st.button('Create Jobs Map'):
-        if st.session_state.get('Users'):
-            if openai_api_key:
-                answers = dict()
-                users = st.session_state.get('Users')
-                for persona in users['personas']:
+        selected = st.button("Apply and move to the next section", key="jjr", type="primary")
 
-                    with st.spinner(text=f"""
-                                    Interviewing users, it should take less than 90 seconds each.\n
-                                    Now interviewing user \"{persona['name']}\" ..."""):
-                        answers[persona['name']] = lib.jtbd.get_single_interview(persona=persona, openai_api_key=openai_api_key)
-                st.session_state['Answers'] = answers
-                st.success('Users interviewed')
+    with tab3:
 
-                answers = st.session_state['Answers']
-                new_answers = {}
+        st.markdown("Generated Job performers")
+        generated_job_performers = st.dataframe(state.generated_job_performers)
+        st.markdown("Selected Main Job")
+        selected_main_job = st.text_input("Selected Main Job", key="selected_main_job", value=state.selected_main_job, label_visibility="collapsed")
 
-                for user, qa_list in answers.items():
-                    for qa in qa_list['answers']['answers']:
-                        question = qa["question"]
-                        
-                        if question not in new_answers:
-                            new_answers[question] = []
+        interviews = []
 
-                        new_answers[question].append({"user": user, "answer": qa["answer"]})
+        use_main_job_in_interviews = st.toggle('Use the Selected Main Job as interview guideline')
+        generate_interview = st.button("Interview", type="primary")
 
-                st.session_state['Interviews'] = new_answers
+        if generate_interview:
+            for job_performer in state.generated_job_performers.to_dict('records'):
+                print (job_performer)
+                with st.spinner(text=f"""
+                                Interviewing job performers, it should take less than 90 seconds each.\n
+                                Now interviewing {job_performer['name']} ..."""):
+                    interviews.append(
+                        lib.jtbd.get_single_interview(
+                            persona=job_performer, 
+                            openai_api_key=openai_api_key, 
+                            main_job = state.selected_main_job, 
+                            use_main_job = use_main_job_in_interviews)
+                    )
+            st.session_state['Interviews'] = interviews
+            st.success('Users interviewed')
 
-                with st.spinner(text="Summarizing interviews, it should take less than 200 seconds ..."):
-                    summarized_answers = dict()
-                    for question in new_answers:
-                        res = lib.jtbd.summarize_answers(question=question,answers=new_answers[question],openai_api_key=openai_api_key)
-                        summarized_answers[question] = res["summarized_answer"]
-                st.success('Interviews summarized')
+        if st.button("Show interviews"):
 
-                with st.spinner(text="Creating Jobs Map, it should take less than 20 seconds ..."):
-                    jobs_map = lib.jtbd.get_jobsmap(personas=users['personas'], answers=summarized_answers, openai_api_key=openai_api_key)
-                st.session_state['JobsMap'] = jobs_map
-                st.success('Jobs Map Created')
-            else:
-                st.warning('Insert your OpenAI API Key')
-        else:
-            st.warning("Users not generated")
 
-    if st.session_state.get('JobsMap'):
-        jobs_map = st.session_state.get('JobsMap')
-        interviews = st.session_state.get('Interviews')
-        col1, col2 = st.columns([3,1])
-        with col1:
-            st.json(json.dumps(jobs_map))
-        with col2:
-            st.download_button('Download JobsMap', json.dumps(jobs_map), file_name=f'JobsMap-{jobs_map["Main Job"].replace(" ", "")}.txt',)
-            st.download_button('Download Interviews', json.dumps(interviews), file_name=f'Interviews.txt',)
-            
+            data = st.session_state['Interviews']
+            # Create an empty dictionary to store the data
+            data_dict = {}
 
+            # Iterate over the list of dictionaries
+            for entry in data:
+                name = entry["name"]
+                answers = entry["answers"]
+                for answer in answers:
+                    question = answer["question"]
+                    response = answer["answer"]
+                    if question not in data_dict:
+                        data_dict[question] = {}
+                    data_dict[question][name] = response
+
+            # Convert the dictionary to a pandas DataFrame
+            df = pd.DataFrame(data_dict)
+
+            # Transpose the DataFrame to match your desired format
+            df = df.transpose()
+
+            st.dataframe(df)
+        
 if __name__ == "__main__":
     main()

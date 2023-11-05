@@ -1,19 +1,23 @@
-# Product Design Automation with Jobs-To-Be-Done (JTBD) and GPT
+# Gideon: User-Centric Products with AI Copilot
 
-The Jobs-To-Be-Done (JTBD) framework is a methodology centered around the concept that customers "hire" products or services to get specific jobs done. With this project, we leverage the power of OpenAI's GPT-3.5 model to automate user interviews, generate JBTD jobs, outcomes, and job stories, thus driving your product roadmap more efficiently.
+The Jobs-To-Be-Done (JTBD) framework is a methodology centered around the concept that customers "hire" products or services to get specific jobs done. With this project, we leverage the power of OpenAI's GPT-3.5 model to generate main jobs, job performers, user interviews, generate JBTD jobs, outcomes, and job stories, thus driving your product roadmap more efficiently.
 
-This project aims to expedite and streamline the process of understanding customer needs and experiences using OpenAI's GPT-3.5 language model. By automating user interviews and generating job stories, we reduce the time and resources spent on extensive manual interactions, thereby optimizing data collection and product roadmap creation.
+This project, Gideon, aims to expedite and streamline the process of understanding customer needs and experiences using OpenAI's GPT-3.5 language model. By automating user interviews and generating job stories, we reduce the time and resources spent on extensive manual interactions, thereby optimizing data collection and product roadmap creation.
 
-### How does it work?
-
-1. **Synthesis of personas**: The system creates dynamic representations of user archetypes, complete with an understanding of their needs, goals, and pain points.
+1. **Discovery of Main Jobs**: The system discover main jobs based on your vision and skillset.
    
-2. **Automated interviews**: We employ the language generation abilities of GPT-3.5 to create a dialogue system based on the JTBD framework. This system interacts with the synthetic personas, efficiently extracting key insights about customer motivations and needs.
+2. **Synthesis of personas**: The system creates dynamic representations of user archetypes, complete with an understanding of their needs, goals, and pain points.
    
-3. **Outcomes and job stories generation**: Using the data collected from the automated interviews, the system generates outcomes and job stories that can inform and drive your product roadmap.
+3. **Automated interviews**: We employ the language generation abilities of GPT-3.5 to create a dialogue system based on the JTBD framework. This system interacts with the synthetic personas, efficiently extracting key insights about customer motivations and needs.
 
-## Getting Started
+... and more 
+   
 
+## Use the cloud version
+
+Go to https://gideon.streamlit.app
+
+## Run locally
 This guide will walk you through the steps to set up and run the project using a Python virtual environment.
 
 ### Prerequisites
@@ -26,7 +30,7 @@ This guide will walk you through the steps to set up and run the project using a
 ### Clone the Project Repository
 
    ```bash
-   git clone https://github.com/marcocello/product-design-gpt-jtbd.git
+   git clone https://github.com/marcocello/productforge.git
    ```
 
 ### Create Python Virtual Environment
@@ -53,6 +57,13 @@ pip install -r requirements.txt
 
 This will install all the required packages and their dependencies into the virtual environment.
 
+### Run Streamlit locally
+
+```bash
+streamlit run streamlit.py
+   ```
+
+<!-- 
 ### Configure the Environment Variables
 
 ```bash
@@ -80,7 +91,7 @@ That's it!
 
 ## Current Limitations
 
-The current release (0.1) uses only GPT without any custom knowledge base and it generates up to the outcomes. Furthermore, the prompts used for generating jobs map and outcomes could benefit from additional refinement.
+The current release (0.1) uses only GPT without any custom knowledge base and it generates up to the outcomes. Furthermore, the prompts used for generating jobs map and outcomes could benefit from additional refinement. -->
 
 ## Contribute
 
