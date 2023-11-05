@@ -77,18 +77,21 @@ def main():
         
         generate_main_jobs = st.button("Generate", type="primary")
         if generate_main_jobs:
-            if topic:
-                with st.spinner(text=f"Generating Main Jobs and Job Performers..."):
-                    jobs = lib.jobs.get(
-                        topic=topic,
-                        skillset=skillset,
-                        jobs=state._jobs,
-                        additional_prompt=state.main_jobs_additional_prompt,
-                        openai_api_key=openai_api_key)
-                    state._jobs = jobs
-                    st.rerun()
+            if openai_api_key:
+                if topic:
+                    with st.spinner(text=f"Generating Main Jobs and Job Performers..."):
+                        jobs = lib.jobs.get(
+                            topic=topic,
+                            skillset=skillset,
+                            jobs=state._jobs,
+                            additional_prompt=state.main_jobs_additional_prompt,
+                            openai_api_key=openai_api_key)
+                        state._jobs = jobs
+                        st.rerun()
+                else:
+                    st.warning('Insert the topic')
             else:
-                st.warning('Insert the topic')
+                st.warning("Insert OpenAI API Key in the sidebar")
 
         
         jobs = st.dataframe(state._jobs, 
@@ -120,15 +123,17 @@ def main():
         generate_job_performers = st.button('Generate', type="primary", key="generate_job_performers")
 
         if generate_job_performers:
-            if profession:
-                total_time = 0.5752688172043015*number+15.15591397849463
-                with st.spinner(text=f"Creating users, it should take less than {math.ceil(total_time / 5) * 5} seconds ..."):
-                    generated_job_performers = lib.persona_prompt_generator.getV2(number=number, profession=profession)
-                st.session_state['generated_job_performers'] = generated_job_performers
-                st.rerun()
+            if openai_api_key:
+                if profession:
+                    total_time = 0.5752688172043015*number+15.15591397849463
+                    with st.spinner(text=f"Creating users, it should take less than {math.ceil(total_time / 5) * 5} seconds ..."):
+                        generated_job_performers = lib.persona_prompt_generator.getV2(number=number, profession=profession)
+                    st.session_state['generated_job_performers'] = generated_job_performers
+                    st.rerun()
+                else:
+                    st.warning('Input the Job Performers')
             else:
-                st.warning('Input the Job Performers')
-
+                st.warning("Insert OpenAI API Key in the sidebar")
 
 
         generated_job_performers = st.data_editor(state.generated_job_performers, 
@@ -152,21 +157,24 @@ def main():
         generate_interview = st.button("Interview", type="primary")
 
         if generate_interview:
-            for job_performer in state.generated_job_performers.to_dict('records'):
-                print (job_performer)
-                with st.spinner(text=f"""
-                                Interviewing job performers, it should take less than 90 seconds each.\n
-                                Now interviewing {job_performer['name']} ..."""):
-                    interviews.append(
-                        lib.jtbd.get_single_interview(
-                            persona=job_performer, 
-                            openai_api_key=openai_api_key, 
-                            main_job = state.selected_main_job, 
-                            use_main_job = use_main_job_in_interviews)
-                    )
-            st.session_state['Interviews'] = interviews
-            st.success('Users interviewed')
-
+            if openai_api_key:
+                for job_performer in state.generated_job_performers.to_dict('records'):
+                    print (job_performer)
+                    with st.spinner(text=f"""
+                                    Interviewing job performers, it should take less than 90 seconds each.\n
+                                    Now interviewing {job_performer['name']} ..."""):
+                        interviews.append(
+                            lib.jtbd.get_single_interview(
+                                persona=job_performer, 
+                                openai_api_key=openai_api_key, 
+                                main_job = state.selected_main_job, 
+                                use_main_job = use_main_job_in_interviews)
+                        )
+                st.session_state['Interviews'] = interviews
+                st.success('Users interviewed')
+            else:
+                st.warning("Insert OpenAI API Key in the sidebar")
+                
         if st.button("Show interviews"):
 
 
