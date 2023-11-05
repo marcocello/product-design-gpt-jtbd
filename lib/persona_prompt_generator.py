@@ -3,6 +3,7 @@ import json
 import pandas as pd
 from langchain.chat_models import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
+from langchain.memory import ChatMessageHistory
 
 def get(number, profession, openai_api_key):
     

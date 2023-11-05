@@ -7,7 +7,7 @@ from langchain.chat_models import ChatOpenAI
 def get(topic, skillset, jobs, additional_prompt, openai_api_key):
 
 
-    llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)
+    llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0, openai_api_key=openai_api_key)
     # vectorstore = Pinecone.from_existing_index(pinecone_index_name, OpenAIEmbeddings())
     # retriever=vectorstore.as_retriever()
 

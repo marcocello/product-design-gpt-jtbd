@@ -10,8 +10,6 @@ import lib.persona_prompt_generator
 import lib.jtbd
 
 
-load_dotenv()
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 def set_page(name):
     st.set_page_config(page_title=name, page_icon=None, initial_sidebar_state="collapsed")
@@ -62,7 +60,7 @@ def main():
     with st.sidebar:
         settings = dict()
         openai_api_key = st.text_input(label='OpenAI API Key', value=state._openai_api_key, placeholder="sk-XXX")
-        settings["openai_api_key"] = openai_api_key
+
 
     with tab1:
 
