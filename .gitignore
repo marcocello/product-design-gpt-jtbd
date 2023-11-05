@@ -18,7 +18,7 @@
 
 # 4. Block some directories and files
 *.git
-**/.terraform*
 **/*env
 **/.venv
 **/TMP
+**/_archive
