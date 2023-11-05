@@ -1,6 +1,5 @@
 from langchain.chat_models import ChatOpenAI
 from langchain.schema import HumanMessage
-from langchain.prompts import PromptTemplate
 from langchain.memory import ChatMessageHistory
 from langchain.chat_models import ChatOpenAI
 from langchain.schema import SystemMessage, HumanMessage

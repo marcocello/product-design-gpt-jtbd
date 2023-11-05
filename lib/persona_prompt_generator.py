@@ -1,26 +1,8 @@
-from langchain.chat_models import ChatOpenAI
-from langchain.schema import HumanMessage
-from langchain.memory import ChatMessageHistory
 import uuid
 import json
-from langchain.chat_models import ChatOpenAI
-from langchain.schema import HumanMessage
-from langchain.memory import ChatMessageHistory
-from langchain.schema import SystemMessage, HumanMessage
-import uuid
-import json
-import time
-import os
 import pandas as pd
-from langchain.vectorstores import Pinecone
-from langchain.embeddings import OpenAIEmbeddings
-import pinecone
-from langchain.schema.runnable import RunnablePassthrough, RunnableLambda
-from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain.schema import StrOutputParser
-
 from langchain.chat_models import ChatOpenAI
-
+from langchain.prompts import ChatPromptTemplate
 
 def get(number, profession, openai_api_key):
     

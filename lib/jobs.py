@@ -1,22 +1,7 @@
-from langchain.chat_models import ChatOpenAI
-from langchain.schema import HumanMessage
-from langchain.memory import ChatMessageHistory
-from langchain.schema import SystemMessage, HumanMessage
-import uuid
-import json
-import time
-import os
-import pandas as pd
-from langchain.vectorstores import Pinecone
-from langchain.embeddings import OpenAIEmbeddings
-import pinecone
-from langchain.schema.runnable import RunnablePassthrough, RunnableLambda
-from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain.schema import StrOutputParser
 
-pinecone_api_key = os.getenv("PINECONE_API_KEY")
-pinecone_environment = os.getenv("PINECONE_ENVIRONMENT")
-pinecone_index_name = os.getenv("PINECONE_INDEX_NAME")
+import pandas as pd
+from langchain.chat_models import ChatOpenAI
+from langchain.prompts import ChatPromptTemplate
 from langchain.chat_models import ChatOpenAI
 
 def get(topic, skillset, jobs, additional_prompt, openai_api_key):
