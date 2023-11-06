@@ -69,8 +69,7 @@ def get_single_interview(persona, openai_api_key, main_job, use_main_job):
             "control": {uuid_number}
         }}    
   """
-  print (prompt)
-
+  
   chat = ChatOpenAI(openai_api_key=openai_api_key)
 
   history = ChatMessageHistory()

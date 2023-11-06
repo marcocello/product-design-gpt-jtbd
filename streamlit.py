@@ -127,7 +127,7 @@ def main():
                 if profession:
                     total_time = 0.5752688172043015*number+15.15591397849463
                     with st.spinner(text=f"Creating users, it should take less than {math.ceil(total_time / 5) * 5} seconds ..."):
-                        generated_job_performers = lib.persona_prompt_generator.getV2(number=number, profession=profession)
+                        generated_job_performers = lib.persona_prompt_generator.getV2(number=number, profession=profession, openai_api_key=openai_api_key)
                     st.session_state['generated_job_performers'] = generated_job_performers
                     st.rerun()
                 else:

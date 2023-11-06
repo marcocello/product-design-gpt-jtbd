@@ -53,9 +53,9 @@ def get(number, profession, openai_api_key):
     return json.loads(output)
 
 
-def getV2(number, profession):
+def getV2(number, profession, openai_api_key):
 
-    llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)
+    llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0, openai_api_key=openai_api_key)
 
     prompt = ChatPromptTemplate.from_messages([
         ("system", 
