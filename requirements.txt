@@ -1,6 +1,4 @@
 langchain
 openai
 python-dotenv
-streamlit
 tiktoken
-pinecone-client
