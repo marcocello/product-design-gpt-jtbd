@@ -1,47 +1,44 @@
-# Gideon: User-Centric Products with AI Copilot
+# User-Centric Products Design with AI Copilot
 
-The Jobs-To-Be-Done (JTBD) framework is a methodology centered around the concept that customers "hire" products or services to get specific jobs done. With this project, we leverage the power of OpenAI's GPT-3.5 model to generate main jobs, job performers, user interviews, generate JBTD jobs, outcomes, and job stories, thus driving your product roadmap more efficiently.
+The Jobs-To-Be-Done (JTBD) [[1](#1), [2](#2), [3](#3)] framework is a methodology centered around the concept that customers "hire" products or services to accomplish specific tasks.
 
-This project, Gideon, aims to expedite and streamline the process of understanding customer needs and experiences using OpenAI's GPT-3.5 language model. By automating user interviews and generating job stories, we reduce the time and resources spent on extensive manual interactions, thereby optimizing data collection and product roadmap creation.
+With this project, we harness the power of OpenAI's GPT models to identify main jobs, job performers, create synthetic users, conduct interviews, and develop needs, thereby driving your product roadmap more efficiently. By automating user interviews, we reduce the time and resources spent on extensive manual interactions, optimizing data collection and product roadmap creation.
 
-1. **Discovery of Main Jobs**: The system discover main jobs based on your vision and skillset.
-   
-2. **Synthesis of personas**: The system creates dynamic representations of user archetypes, complete with an understanding of their needs, goals, and pain points.
-   
-3. **Automated interviews**: We employ the language generation abilities of GPT-3.5 to create a dialogue system based on the JTBD framework. This system interacts with the synthetic personas, efficiently extracting key insights about customer motivations and needs.
+1. **Discovery of Main Jobs and Job Performers:** The system identifies and suggests a list of potential main jobs and job performers based on your vision and skillset.
 
-... and more 
-   
+2. **Synthesis of Job Performers:** The system creates dynamic representations of user archetypes, complete with an understanding of their needs, goals, and pain points.
 
-## Use the cloud version
+3. **Automated Interviews:** We leverage the language generation abilities of GPT to create a dialogue system based on the JTBD framework. This system interacts with synthetic personas, efficiently extracting key insights about customer motivations and needs.
 
-Go to https://gideon.streamlit.app
+4. **Analyze Interviews:** This last step enables us to seamlessly distill the wealth of information gathered from automated interviews into actionable insights. By leveraging OpenAI's GPT models to analyze interviews, we extract detailed information such as job steps, needs, emotional jobs, and social jobs. 
 
-## Run locally
-This guide will walk you through the steps to set up and run the project using a Python virtual environment.
+This project serves as a foundation for a user-centric product design strategy, empowering you to make informed decisions about feature prioritization, user experience enhancements, and overall product development.
+
+## Getting Started
 
 ### Prerequisites
 
 - Python 3.6 or higher
 - `pip` package manager
 - Git
+- VS Code
 
 
-### Clone the Project Repository
+### Clone the project
 
    ```bash
-   git clone https://github.com/marcocello/productforge.git
+   git clone https://github.com/marcocello/product-design-gpt-jtbd
    ```
 
-### Create Python Virtual Environment
-
-Navigate to the project directory:
+### Create Python virtual environment and install dependencies
 
 ```bash
 cd product-design-gpt-jtbd
 
 python3 -m venv .virtualenv
+   ```
 
+```bash 
 #Activate the virtual environment for Windows
 .virtualenv\Scripts\activate
 
@@ -49,21 +46,9 @@ python3 -m venv .virtualenv
 source .virtualenv/bin/activate
    ```
 
-With the virtual environment activated, use `pip` to install the project dependencies from the `requirements.txt` file. Run the following command:
-
 ```bash
 pip install -r requirements.txt
 ```
-
-This will install all the required packages and their dependencies into the virtual environment.
-
-### Run Streamlit locally
-
-```bash
-streamlit run streamlit.py
-   ```
-
-<!-- 
 ### Configure the Environment Variables
 
 ```bash
@@ -77,21 +62,32 @@ Open the `.env` file and find the variable `OPENAI_API_KEY`. Replace the placeho
 
 Note: Make sure not to share your API key publicly or commit it to version control systems.
 
-### Run the `main.ipynb` file
+### Run the `notebook.ipynb` file
 
 Activate the virtual environment by following the activation steps mentioned before if you haven't already.
 
 Open Visual Studio Code (VSCode) or any other code editor of your choice.
 
-Locate the `main.ipynb` file and open it. Within the `main.ipynb` file, look for the "Run" button or click on the "Run Cell" option next to each code cell to execute the code.
+Locate the `notebook.ipynb` file and open it. Within the `notebook.ipynb` file, look for the "Run" button or click on the "Run Cell" option next to each code cell to execute the code.
 
-Follow the instructions provided in the `main.ipynb` file to interact with the project.
+Follow the instructions provided in the `notebook.ipynb` file to interact with the project.
 
-That's it! 
-
+That's it!
+ 
 ## Current Limitations
 
-The current release (0.1) uses only GPT without any custom knowledge base and it generates up to the outcomes. Furthermore, the prompts used for generating jobs map and outcomes could benefit from additional refinement. -->
+Current release only works fine with gpt-4-1106-preview model.
+
+## References
+
+<a id="1">[1]</a> J. Kalbach, The Jobs To Be Done Playbook: Align Your Markets, Organization, and Strategy Around Customer Needs. New York: Rosenfeld Media, 2020.
+
+<a id="2">[2]</a> A. Ulwick, What Customers Want: Using Outcome-Driven Innovation to Create Breakthrough Products and Services. McGraw-Hill, 2005.
+
+<a id="3">[3]</a> A. Ulwick, Put Jobs-To-Be-Done Theory Into Practice With Outcome-Driven Innovation, https://www.youtube.com/watch?v=2ecwXEnQ6xY, 2018.
+
+<a id="4">[4]</a> M. Cello, Supercharging Product Design: Unleashing GPT and Jobs-to-be-Done for Limitless Innovation, https://bootcamp.uxdesign.cc/supercharging-product-design-unleashing-gpt-and-jobs-to-be-done-for-limitless-innovation-ff32fcb2c5a4, 2023
+
 
 ## Contribute
 
