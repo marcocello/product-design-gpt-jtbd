@@ -11,8 +11,9 @@ load_dotenv()
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 MODEL = os.getenv("MODEL")
+TEMPERATURE = os.getenv("TEMPERATURE")
 
-model = ChatOpenAI(model_name=MODEL, temperature=0)
+model = ChatOpenAI(model_name=MODEL, temperature=TEMPERATURE)
 
 prompt = ChatPromptTemplate.from_messages([
     ("system", """
@@ -40,17 +41,12 @@ Categorize each job step into one of the following categories:
     
 You don't need to create new categories. If you don't know how to categorize a job steps put in a additonal category "uncategorized"
 
-This is the output format exptected. Only a json with this structure. Do not put any additional characters other than the json file
+This is the output format you have to generate:
 {{
-    "analysis" {{
-     [
-        {{
-            "Category":"",
-            "Job Step": ""
-        }}
-     ]
-    }}
+    "Category":"",
+    "Job Step": ""
 }}
+    
 
 """)]
 )
@@ -70,6 +66,7 @@ functions = [
                     "properties": {
                         "Category":{
                             "type": "string",
+                            "description": "Category"
                         },
                         "Job Step": {
                             "type": "string",
@@ -79,7 +76,7 @@ functions = [
                 },
             },
         },
-        "required": ["Category", "Job steps"]
+        "required": ["Category", "Job Step"]
     },
     },
 ]
