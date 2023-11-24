@@ -93,6 +93,3 @@ chain = (
     prompt 
     | model.bind(function_call={"name": "performers_and_jobs_discovery"}, functions = functions)
 )
-
-res = chain.invoke({"main_job":selected_main_job, "job_performers": selected_job_performers, "job_steps":job_steps})
-res_dict = (json.loads(res.additional_kwargs['function_call']['arguments']))
