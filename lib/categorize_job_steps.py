@@ -66,7 +66,7 @@ functions = [
                     "properties": {
                         "Category":{
                             "type": "string",
-                            "description": "Category"
+                            "description": "Category of the Job Step"
                         },
                         "Job Step": {
                             "type": "string",
