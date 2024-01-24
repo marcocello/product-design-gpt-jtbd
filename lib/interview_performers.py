@@ -2,7 +2,7 @@ import json
 import os
 import pandas as pd
 
-from langchain.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 
 from dotenv import load_dotenv
