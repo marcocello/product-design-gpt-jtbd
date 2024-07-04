@@ -21,16 +21,17 @@ Your toolkit includes not only proven business methodologies but also a keen int
      """),
 
     ("human", """
+A vision statement explains why a company exists, what its future goals are, and the change it's aiming to create in the world. It's the founders single dream or north star that unifies and inspires every employee—and ideally other stakeholders, too. The statement should be aspirational. Though a company may never fully achieve its vision, it is committed to doing everything it can to work towards it every day. Everything a company does—both large and small—should contribute to its vision.
+
+A mission statement is an articulation of what you do or deliver as a business every day. Though effective mission statements end up looking simple, you’ll be investing a lot of time and effort into achieving that simplicity.
+     
 Take the following text and create a Vision and Mission:
 ==========
 {vision}
 ==========
 
+Vision and Mission needs to be well explained, try to be as much as clear as possible.
      
-A vision statement explains why a company exists, what its future goals are, and the change it's aiming to create in the world. It's the founders single dream or north star that unifies and inspires every employee—and ideally other stakeholders, too. The statement should be aspirational. Though a company may never fully achieve its vision, it is committed to doing everything it can to work towards it every day. Everything a company does—both large and small—should contribute to its vision.
-
-A mission statement is an articulation of what you do or deliver as a business every day. Though effective mission statements end up looking simple, you’ll be investing a lot of time and effort into achieving that simplicity.
-
 {additional_prompt}
     """)
 ])
