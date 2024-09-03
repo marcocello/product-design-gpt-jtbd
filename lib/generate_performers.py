@@ -36,6 +36,7 @@ Create {number} {job_performers}. This is the output format:
      }}
 }}
 
+Profession, Industry, Experience_level and Description should be related to {job_performers}
 {additional_prompt}
 
      """)
