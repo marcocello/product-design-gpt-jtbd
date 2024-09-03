@@ -4,3 +4,4 @@ langchain-openai
 openai
 python-dotenv
 tiktoken
+pandas
