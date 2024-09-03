@@ -22,3 +22,5 @@
 **/.venv
 **/TMP
 **/_archive
+**/output
+**/_priv_*
