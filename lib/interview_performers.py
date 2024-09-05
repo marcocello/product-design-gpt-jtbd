@@ -2,24 +2,43 @@ import json
 import os
 import pandas as pd
 
-from langchain_openai import ChatOpenAI
+from langchain_openai import ChatOpenAI, AzureChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 
 from dotenv import load_dotenv
 
 load_dotenv()
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-MODEL = os.getenv("MODEL")
-TEMPERATURE = os.getenv("TEMPERATURE")
 
-model = ChatOpenAI(model_name=MODEL, temperature=TEMPERATURE)
+MODEL = os.getenv("MODEL")
+API_TYPE = os.getenv("API_TYPE")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+BASE_URL = os.getenv("BASE_URL")
+API_VERSION = os.getenv("API_VERSION")
+TEMPERATURE = os.getenv("TEMPERATURE")
+PROVIDER = os.getenv("PROVIDER")
+
+
+if PROVIDER == "azure":
+    model = AzureChatOpenAI(
+        azure_endpoint=BASE_URL,
+        azure_deployment=MODEL,
+        api_version=API_VERSION,
+        temperature=TEMPERATURE,
+        max_tokens=None,
+        timeout=None,
+        max_retries=2,
+    )
+
+else:
+    model = ChatOpenAI(model_name=MODEL, temperature=TEMPERATURE)
+
 
 prompt = ChatPromptTemplate.from_messages([
     ("system", """
 
 Act like this user {job_performer}. You will assume the role of this usert embodying the specified characteristics and be interviewed regarding their expertise in the indicated profession. You will fully immerse yourself in the persona of this individual, faithfully portraying their unique characteristics and experiences throughout the interview.
 
-     """),
+    """),
     
     ("human", """
 
